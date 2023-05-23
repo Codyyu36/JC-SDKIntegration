@@ -1,13 +1,14 @@
+#include <winsock2.h>
+#include <WS2tcpip.h>
 #include <iostream>
 #include <string>
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
-#include <winsock2.h>
-#include <WS2tcpip.h> 
 
-#define SERVER_IP "127.0.0.1"  // Replace with the actual server IP address
-#define SERVER_PORT 1234       // Replace with the actual server port
+#define SERVER_IP "192.168.10.1"  // Replace with the actual server IP address
+// 192.168.10.1
+#define SERVER_PORT 21   // Replace with the actual server port try 20 or 88
 
 int main() {
     WSADATA wsaData;
@@ -31,16 +32,20 @@ int main() {
     // Set up server address
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(SERVER_PORT);
-    if (InetPton(AF_INET, SERVER_IP, &(serverAddr.sin_addr)) <= 0) {
-        std::cerr << "Failed to set up server address." << std::endl;
+
+    //set server ip
+    if (inet_pton(AF_INET, SERVER_IP, &(serverAddr.sin_addr)) != 1) {
+        std::cerr << "Invalid server IP address." << std::endl;
         closesocket(sockfd);
         WSACleanup();
         return 1;
     }
 
+    serverAddr.sin_port = htons(SERVER_PORT);
+
     // Connect to the server
     if (connect(sockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        WSAGetLastError();
         std::cerr << "Failed to connect to the server." << std::endl;
         closesocket(sockfd);
         WSACleanup();
@@ -82,6 +87,8 @@ int main() {
     }
 
     // Extract the fields from the response
+    std::cout << "Response: " << response << std::endl;
+
     unsigned char stx = response[0];
     std::string command = response.substr(1, 2);
     std::string cmdType = response.substr(3, 1);
