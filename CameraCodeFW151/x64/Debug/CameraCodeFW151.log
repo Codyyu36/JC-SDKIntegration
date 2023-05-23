@@ -83,15 +83,4 @@ C:\Users\alada\JC_Code\JC-SDKIntegration\CameraCodeFW151\SDK&Demo_V2.5.1.230517\
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xstring(5155,29): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
 C:\Users\alada\JC_Code\JC-SDKIntegration\CameraCodeFW151\SDK&Demo_V2.5.1.230517\SDK\C++\include\JcSmartDevice2.0\SI_CmParam.h(436,25): warning C4251: 'JC::JcNotifyMeasureData::m_tMatList': class 'std::list<cv::Mat,std::allocator<cv::Mat>>' needs to have dll-interface to be used by clients of class 'JC::JcNotifyMeasureData'
 C:\Users\alada\JC_Code\JC-SDKIntegration\CameraCodeFW151\SDK&Demo_V2.5.1.230517\SDK\C++\include\JcSmartDevice2.0\SI_CmParam.h(436,10): message : see declaration of 'std::list<cv::Mat,std::allocator<cv::Mat>>'
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xmemory(2096,9): error C2079: 'std::_Wrap<_Ty>::_Value' uses undefined class 'JC::JcSmartDevInterface'
-          with
-          [
-              _Ty=JC::JcSmartDevInterface
-          ]
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\memory(2105,1): message : see reference to class template instantiation 'std::_Wrap<_Ty>' being compiled
-          with
-          [
-              _Ty=JC::JcSmartDevInterface
-          ]
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\memory(2764): message : see reference to class template instantiation 'std::_Ref_count_obj2<JC::JcSmartDevInterface>' being compiled
-C:\Users\alada\JC_Code\JC-SDKIntegration\CameraCodeFW151\CameraCodeFW151.cpp(18,33): message : see reference to function template instantiation 'std::shared_ptr<JC::JcSmartDevInterface> std::make_shared<JC::JcSmartDevInterface,>(void)' being compiled
+  CameraCodeFW151.vcxproj -> C:\Users\alada\JC_Code\JC-SDKIntegration\CameraCodeFW151\x64\Debug\CameraCodeFW151.exe

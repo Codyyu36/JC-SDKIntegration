@@ -16,11 +16,15 @@ int main()
     std::cout << JC::SI_GetVersion();
 
     // Try initializing 
-    JC::SI_Handle handle = std::make_shared<JC::JcSmartDevInterface>();
     JC::JcRequestCMDPtr param = std::make_shared<JC::JcRequestCMD>();
     param->m_pData = std::make_shared<JC::JcInitDevice>("");
     JC::JcInitDevicePtr pParam = std::dynamic_pointer_cast<JC::JcInitDevice>(param->m_pData);
+    JC::SI_Handle handle;
     int nRet = SI_Init(handle, param);
+    if (nRet != 0) {
+        std::cout << JC::SI_GetVersion();
+        return 1;
+    }
 
     std::cout << nRet;
     // Try the SI_GetDeviceList() function
