@@ -6,3 +6,5 @@ CameraCodeFW151/x64/
 patterns/
 *.csv
 *.xlsx
+*.dll
+*.pyd
