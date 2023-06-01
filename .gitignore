@@ -8,3 +8,4 @@ patterns/
 *.xlsx
 *.dll
 *.pyd
+PGCode/
