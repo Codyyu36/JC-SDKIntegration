@@ -9,3 +9,4 @@ patterns/
 *.dll
 *.pyd
 PGCode/
+PyQt5Demo/
