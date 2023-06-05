@@ -1,6 +1,6 @@
 import JcSmartDevicePyd
 import pandas as pd
-from Client import Client
+from PGClient import Client
 import time
 
 # Read the CSV file into a pandas DataFrame

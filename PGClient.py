@@ -133,5 +133,35 @@ class Client:
         response = self.client_socket.recv(1024)
         print(response)
 
+    def send_numbered_image_swap_request(self, image_number):
+        request_data = {
+            'STX': 0x02,
+            'Command': 'CP,',
+            'CmdType': 'C,',
+            'Acknowledge': ',',
+            'Reserve': ',',
+            'RackNo': "1,",
+            'PgNo': "1,",
+            'ChannelNo': "1,",
+            'PatternIndex': image_number,
+            'ETX': 0x03
+        }
+
+        request_bytes = bytes([request_data['STX']]) + \
+                        request_data['Command'].encode('ascii') + \
+                        request_data['CmdType'].encode('ascii') + \
+                        request_data['Acknowledge'].encode('ascii') + \
+                        request_data['Reserve'].encode('ascii') + \
+                        request_data['RackNo'].encode() + \
+                        request_data['PgNo'].encode() + \
+                        request_data['ChannelNo'].encode() + \
+                        request_data['PatternIndex'].encode('ascii') + \
+                        bytes([request_data['ETX']])
+
+        print("power image_swap request: {}".format(request_bytes))
+        self.client_socket.sendall(request_bytes)
+        response = self.client_socket.recv(1024)
+        print(response)
+
     def close(self):
         self.client_socket.close()

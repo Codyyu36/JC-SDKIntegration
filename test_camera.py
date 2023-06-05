@@ -35,5 +35,13 @@ else:
     tParamSNAP = JcSmartDevicePyd.JcSetExpGainParam()
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_SNAP_OPERATE,tParamSNAP)
     print("take picture", nRet)
-    #analyze and save picture
+    time.sleep(3)
+
+    #開始測量
+    tParamMes = JcSmartDevicePyd.JcMeasure()
+    # tParamMes.m_nPtnNo = self.sbPattenNo.value()
+    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_MEASURE_OPERATE,tParamMes)
+    print("start measure", nRet)
+    time.sleep(20)
+
 
