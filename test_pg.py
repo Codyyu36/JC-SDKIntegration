@@ -1,4 +1,5 @@
 from PGClient import Client
+import time
 
 # Create a client instance
 client = Client('127.0.0.1', 9999)
@@ -10,7 +11,10 @@ client.connect()
 client.send_power_on_request()
 
 # Send the power off request
-client.send_power_off_request()
+# client.send_power_off_request()
 
 # Send image swap request with index
-client.send_numbered_image_swap_request(1)
+for index in range(20):
+
+    client.send_numbered_image_swap_request(index)
+    time.sleep(1)

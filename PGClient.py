@@ -143,7 +143,7 @@ class Client:
             'RackNo': "1,",
             'PgNo': "1,",
             'ChannelNo': "1,",
-            'PatternIndex': image_number,
+            'PatternIndex': str(image_number),
             'ETX': 0x03
         }
 
