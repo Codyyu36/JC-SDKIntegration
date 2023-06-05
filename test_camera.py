@@ -1,4 +1,5 @@
 import JcSmartDevicePyd
+import time
 
 vecDevList = JcSmartDevicePyd.SI_PyGetDeviceList()
 nDevCnt = len(vecDevList)
@@ -6,22 +7,26 @@ nDevCnt = len(vecDevList)
 if nDevCnt < 1:
     print('No device find.')
 else:
-    sDevSN = "61CF-02"  # 设备 SN
+    sDevSN = "FW151A001" # 设备 SN
 
-    #initialize
+    #check version
+    version_num = 'version: ' + JcSmartDevicePyd.SI_PyGetVersion()
+    print("version", version_num)
+    #
+    #uninitialize
+    # nRet = JcSmartDevicePyd.SI_PyUninit(sDevSN)
+
+    # initialize
     nRet = JcSmartDevicePyd.SI_PyInit(sDevSN)
     print('init', nRet)
-
-    #get device info
-    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)
-    print('eREQ_GET_DEVICE_INFO', nRet)
+    time.sleep(20)
 
     #set exposure time
     tParam = JcSmartDevicePyd.JcSetExpGainParam()
     tParam.m_nExp = 5500
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_EXPGAIN_VALUE,tParam)
-    print('eREQ_SET_EXPGAIN_VALUE', nRet)
-
+    print("set Exposure Time", nRet)
+    time.sleep(3)
     # TODO: set aperture to "clear"
     # tParamMain = JcSmartDevicePyd.JcMainFlowParam()
     #
@@ -29,4 +34,6 @@ else:
     #take picture
     tParamSNAP = JcSmartDevicePyd.JcSetExpGainParam()
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_SNAP_OPERATE,tParamSNAP)
-    print('eREQ_SET_SNAP_OPERATE', nRet)
+    print("take picture", nRet)
+    #analyze and save picture
+

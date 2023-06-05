@@ -10,3 +10,6 @@ patterns/
 *.pyd
 PGCode/
 PyQt5Demo/
+__pycache__/
+SDKvenv/
+venv/
