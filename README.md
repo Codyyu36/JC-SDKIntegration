@@ -9,10 +9,13 @@ To get started, follow these steps:
 1. Download the PyQt5Demo code.
 2. Set up a virtual environment using Python 3.8.
 3. Activate the virtual environment.
-4. Install the required dependencies using the following command:
+4. Install the required dependencies using either command:
 
    ```shell
-   pip install -r requirements.txt
+   pip install -r pip_requirements.txt
+
+   ```shell
+   conda create --name <env> --file conda_requirements.txt
 
 
 ## Workflow
