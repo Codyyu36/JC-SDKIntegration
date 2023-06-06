@@ -14,7 +14,6 @@ To get started, follow these steps:
    ```shell
    pip install -r pip_requirements.txt
 
-   ```shell
    conda create --name <env> --file conda_requirements.txt
 
 
