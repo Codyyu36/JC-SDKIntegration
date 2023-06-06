@@ -19,6 +19,7 @@ else:
             ret = JcSmartDevicePyd.SI_PyGetNotify(sDevSN,tNoti)
             if ret == 0:
                 # 接收回包
+                print("tNoti: {}".format(tNoti))
                 break
             else:
                 time.sleep(0.001)
