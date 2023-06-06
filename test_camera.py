@@ -37,6 +37,11 @@ else:
     print('init', nRet)
     waitForReply()
 
+    #get device info
+    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)
+    print('get device info', nRet)
+    waitForReply()
+
     #set exposure time
     tParam = JcSmartDevicePyd.JcSetExpGainParam()
     tParam.m_nExp = 5500
@@ -54,11 +59,9 @@ else:
     print("take picture", nRet)
     waitForReply()
 
-    #開始測量
-    tParamMes = JcSmartDevicePyd.JcMeasure()
-    # tParamMes.m_nPtnNo = self.sbPattenNo.value()
-    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_MEASURE_OPERATE,tParamMes)
-    print("start measure", nRet)
+    #get image
+    tParamMf1 = JcSmartDevicePyd.JcGetImg()
+    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_IMAGE_DATA,tParamMf1)
+    print("get image", nRet)
     waitForReply()
-
 
