@@ -1,8 +1,8 @@
-from PGClient import Client
+from PGClient import PGClient
 import time
 
 # Create a client instance
-client = Client('127.0.0.1', 9999)
+client = PGClient('127.0.0.1', 9999)
 
 # Connect to the server
 client.connect()
