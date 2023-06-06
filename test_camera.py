@@ -1,5 +1,11 @@
 import JcSmartDevicePyd
 import time
+import cv2
+
+def printRecvInfo(tNoti):
+    strInfo = '[<--]CMD: %s, ret: %d, json: %s, error: %s.' % (
+        tNoti.m_eReplyType.name, tNoti.m_nRet, tNoti.m_strJsonData, tNoti.m_strErrorInfo)
+    print(strInfo)
 
 vecDevList = JcSmartDevicePyd.SI_PyGetDeviceList()
 nDevCnt = len(vecDevList)
@@ -19,15 +25,14 @@ else:
             ret = JcSmartDevicePyd.SI_PyGetNotify(sDevSN,tNoti)
             if ret == 0:
                 # 接收回包
-                print("tNoti: {}".format(tNoti))
-                break
+                printRecvInfo(tNoti)
+                return tNoti
             else:
                 time.sleep(0.001)
 
     #check version
     version_num = 'version: ' + JcSmartDevicePyd.SI_PyGetVersion()
     print("version", version_num)
-    waitForReply()
     #
     #uninitialize
     # nRet = JcSmartDevicePyd.SI_PyUninit(sDevSN)
@@ -49,7 +54,7 @@ else:
     print("set Exposure Time", nRet)
     waitForReply()
 
-    # TODO: set aperture to "clear"
+    # TODO: set ring filter to "clear"
     # tParamMain = JcSmartDevicePyd.JcMainFlowParam()
     #
 
@@ -63,5 +68,12 @@ else:
     tParamMf1 = JcSmartDevicePyd.JcGetImg()
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_IMAGE_DATA,tParamMf1)
     print("get image", nRet)
-    waitForReply()
+    tNoti = waitForReply()
+
+    tData = tNoti.m_pData
+
+    mat = tData.m_tImage.copy()
+
+    cv2.imwrite("1.jpg", mat)
+
 

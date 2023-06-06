@@ -31,7 +31,7 @@ cameraClient.initializeDevice()
 cameraClient.getDeviceInfo()
 
 # Set camera exposure time, as this is constant
-cameraClient.setExposureTime(5500)
+cameraClient.setExposureTime(550000)
 
 ## Loop through all images
 
@@ -74,7 +74,7 @@ for index in range(20):
     cameraClient.takePicture()
 
     # Save the image data of the taken picture
-    cameraClient.getImageData()
+    cameraClient.getImageData(index)
 
 
 

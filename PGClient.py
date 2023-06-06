@@ -68,10 +68,9 @@ class PGClient:
                         bytes([request_data['ETX']])
 
         #         request_bytes = bytes.fromhex('02 53 50 2C 43 2C 2C 2C 31 2C 31 2C 31 2C 31 03')
-        print("power on request: {}".format(request_bytes))
+        print("power on request")
         self.client_socket.sendall(request_bytes)
         response = self.client_socket.recv(1024)
-        print(response)
 
     def send_power_off_request(self):
         request_data = {
@@ -98,10 +97,10 @@ class PGClient:
                         request_data['Operation Code'].encode() + \
                         bytes([request_data['ETX']])
 
-        print("power off request: {}".format(request_bytes))
+        print("power off request")
         self.client_socket.sendall(request_bytes)
         response = self.client_socket.recv(1024)
-        print(response)
+
 
     def send_image_swap_request(self, image_path):
         request_data = {
@@ -158,10 +157,9 @@ class PGClient:
                         request_data['PatternIndex'].encode('ascii') + \
                         bytes([request_data['ETX']])
 
-        print("power image_swap request: {}".format(request_bytes))
+        print("image_swap request")
         self.client_socket.sendall(request_bytes)
         response = self.client_socket.recv(1024)
-        print(response)
 
     def close(self):
         self.client_socket.close()
