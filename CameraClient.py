@@ -39,6 +39,11 @@ class CameraClient:
         tParamMain = JcSmartDevicePyd.JcMainFlowParam()
         print('set main parameters', nRet)
 
+        tParamMes = JcSmartDevicePyd.JcMeasure()
+        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN,JcSmartDevicePyd.eREQ_SET_MEASURE_OPERATE,tParamMes)
+        print('capture calibrated image', nRet)
+        self.waitForReply()
+
     def getDeviceInfo(self):
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)
         print('get device info', nRet)
@@ -67,6 +72,15 @@ class CameraClient:
 
         mat = tData.m_tImage.copy()
 
-        cv2.imwrite("{}.tif".format(index), mat)
+        cv2.imwrite("{}.jpg".format(index), mat)
 
         print("maximum value of image ", max(mat))
+
+    def setRedNDWheel(self):
+        tParamNDS = JcSmartDevicePyd.JcSetNDPos()
+        tParamNDS.m_eNDPosType = JcSmartDevicePyd.eND0
+
+        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN,JcSmartDevicePyd.eREQ_SET_NDWHEEL_VALUE,tParamNDS)
+        print("set NDWheel to Red", nRet)
+
+    # TODO: add green and blue after the above works
