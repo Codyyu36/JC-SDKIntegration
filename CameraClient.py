@@ -38,9 +38,6 @@ class CameraClient:
         print('init', nRet)
         self.waitForReply()
 
-        tParamMain = JcSmartDevicePyd.JcMainFlowParam()
-        print('set main parameters', nRet)
-
     def getDeviceInfo(self):
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)
         print('get device info', nRet)
@@ -69,28 +66,7 @@ class CameraClient:
         # 图像数据
         mat = tData.m_tImage.copy()
         dst = mat
-
-        jsVal = json.loads(tNoti.m_strJsonData)
-        nPixformat = JcSmartDevicePyd.Mono16
-        if "PixFormat" in jsVal:
-            nPixformat = jsVal["PixFormat"]
-
-        if mat.dtype == 'uint16':
-            if nPixformat == JcSmartDevicePyd.Mono12:
-                # dst = cv2.convertTo(mat, cv2.CV_16UC1, 16)
-                mat *= 16
-                dst = mat.astype(np.uint16)
-            elif nPixformat == JcSmartDevicePyd.BayerRG12:
-                # mat.convertTo(dst, cv2.CV_16UC1, 16)
-                mat *= 16
-                dst = mat.astype(np.uint16)
-                # cv2.cvtColor(dst, dst, cv2.COLOR_BayerRG2RGB)
-                dst = cv2.cvtColor(dst, cv2.COLOR_BayerRG2RGB)
-            else:
-                dst = mat.astype(np.uint16)
-
+        
         cv2.imwrite("{}.jpg".format(index), dst)
-
-        print("maximum value of image ", max(dst))
 
     # TODO: add swapping filter wheel after API is available
