@@ -1,6 +1,8 @@
 import JcSmartDevicePyd
 import time
 import cv2
+import json
+import numpy as np
 
 class CameraClient:
     def __init__(self, devSN):
@@ -39,11 +41,6 @@ class CameraClient:
         tParamMain = JcSmartDevicePyd.JcMainFlowParam()
         print('set main parameters', nRet)
 
-        tParamMes = JcSmartDevicePyd.JcMeasure()
-        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN,JcSmartDevicePyd.eREQ_SET_MEASURE_OPERATE,tParamMes)
-        print('capture calibrated image', nRet)
-        self.waitForReply()
-
     def getDeviceInfo(self):
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)
         print('get device info', nRet)
@@ -69,18 +66,31 @@ class CameraClient:
         tNoti = self.waitForReply()
 
         tData = tNoti.m_pData
-
+        # 图像数据
         mat = tData.m_tImage.copy()
+        dst = mat
 
-        cv2.imwrite("{}.jpg".format(index), mat)
+        jsVal = json.loads(tNoti.m_strJsonData)
+        nPixformat = JcSmartDevicePyd.Mono16
+        if "PixFormat" in jsVal:
+            nPixformat = jsVal["PixFormat"]
 
-        print("maximum value of image ", max(mat))
+        if mat.dtype == 'uint16':
+            if nPixformat == JcSmartDevicePyd.Mono12:
+                # dst = cv2.convertTo(mat, cv2.CV_16UC1, 16)
+                mat *= 16
+                dst = mat.astype(np.uint16)
+            elif nPixformat == JcSmartDevicePyd.BayerRG12:
+                # mat.convertTo(dst, cv2.CV_16UC1, 16)
+                mat *= 16
+                dst = mat.astype(np.uint16)
+                # cv2.cvtColor(dst, dst, cv2.COLOR_BayerRG2RGB)
+                dst = cv2.cvtColor(dst, cv2.COLOR_BayerRG2RGB)
+            else:
+                dst = mat.astype(np.uint16)
 
-    def setRedNDWheel(self):
-        tParamNDS = JcSmartDevicePyd.JcSetNDPos()
-        tParamNDS.m_eNDPosType = JcSmartDevicePyd.eND0
+        cv2.imwrite("{}.jpg".format(index), dst)
 
-        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN,JcSmartDevicePyd.eREQ_SET_NDWHEEL_VALUE,tParamNDS)
-        print("set NDWheel to Red", nRet)
+        print("maximum value of image ", max(dst))
 
-    # TODO: add green and blue after the above works
+    # TODO: add swapping filter wheel after API is available
