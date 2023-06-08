@@ -52,9 +52,13 @@ class CameraClient:
 
     def takePicture(self):
         tParamSNAP = JcSmartDevicePyd.JcSetExpGainParam()
+        start_time = time.time()
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_SNAP_OPERATE, tParamSNAP)
         print("take picture", nRet)
         self.waitForReply()
+        end_time = time.time()
+        elapsed_time = end_time - start_time  # Calculate the elapsed time in seconds
+        print("Elapsed time:", elapsed_time, "seconds")
 
     def getImageData(self, index):
         tParamMf1 = JcSmartDevicePyd.JcGetImg()
