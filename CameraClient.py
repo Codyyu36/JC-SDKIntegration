@@ -48,6 +48,7 @@ class CameraClient:
         self.waitForReply()
 
     def setExposureTime(self, exposure):
+        print("exposure time is {} ms")
         tParam = JcSmartDevicePyd.JcSetExpGainParam()
         tParam.m_nExp = exposure
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_EXPGAIN_VALUE, tParam)
@@ -91,3 +92,43 @@ class CameraClient:
             cv2.imwrite("{}.jpg".format(index), m)
 
     # TODO: add swapping filter wheel after API is available
+
+    def useRedColorFilter(self):
+
+        tParamFilters = JcSmartDevicePyd.JcSetFilterPos()
+        nPos = JcSmartDevicePyd.eX
+        tParamFilters.m_eWheelPosType = nPos
+
+        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
+        self.waitForReply()
+        print("change to red color filter", nRet)
+
+    def useGreenColorFilter(self):
+
+        tParamFilters = JcSmartDevicePyd.JcSetFilterPos()
+        nPos = JcSmartDevicePyd.eY
+        tParamFilters.m_eWheelPosType = nPos
+
+        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
+        self.waitForReply()
+        print("change to green color filter", nRet)
+
+    def useBlueColorFilter(self):
+
+        tParamFilters = JcSmartDevicePyd.JcSetFilterPos()
+        nPos = JcSmartDevicePyd.eZ
+        tParamFilters.m_eWheelPosType = nPos
+
+        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
+        self.waitForReply()
+        print("change to blue color filter", nRet)
+
+    def useClearColorFilter(self):
+
+        tParamFilters = JcSmartDevicePyd.JcSetFilterPos()
+        nPos = JcSmartDevicePyd.eCF3
+        tParamFilters.m_eWheelPosType = nPos
+
+        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
+        self.waitForReply()
+        print("change to clear color filter", nRet)
