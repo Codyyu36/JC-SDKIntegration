@@ -142,7 +142,7 @@ class PGClient:
             'RackNo': "1,",
             'PgNo': "1,",
             'ChannelNo': "1,",
-            'PatternIndex': str(image_number),
+            'PatternIndex': str(image_number+1),
             'ETX': 0x03
         }
 

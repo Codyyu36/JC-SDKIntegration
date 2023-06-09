@@ -5,10 +5,10 @@ from CameraClient import CameraClient
 import time
 
 # Read the CSV file into a pandas DataFrame
-df = pd.read_csv('SDKIntegrationConfig.csv')
-
-color_map = {"R":"Red", "G":"Green", "B":"Blue"}
-image_paths = []
+# df = pd.read_csv('SDKIntegrationConfig.csv')
+#
+# color_map = {"R":"Red", "G":"Green", "B":"Blue"}
+# image_paths = []
 
 # Create a PG client instance
 client = PGClient('127.0.0.1', 9999)
@@ -23,15 +23,6 @@ sDevSN = "FW151A001"  # Camera SN
 
 # Create a camera client instance
 cameraClient = CameraClient(sDevSN)
-
-# Initialize camera
-cameraClient.initializeDevice()
-
-# Get camera device info
-cameraClient.getDeviceInfo()
-
-# Set camera exposure time, as this is constant
-cameraClient.setExposureTime(550000)
 
 ## Loop through all images
 
@@ -63,8 +54,19 @@ cameraClient.setExposureTime(550000)
 #         print('No device find.')
 #         break
 
+tNoti = None
+
 #Loop through all images
-for index in range(20):
+for index in range(7):
+
+    # Initialize camera
+    cameraClient.initializeDevice()
+
+    # Get camera device info
+    cameraClient.getDeviceInfo()
+
+    # Set camera exposure time, as this is constant
+    cameraClient.setExposureTime(550000)
 
     # Send image swap request with index
     client.send_numbered_image_swap_request(index)
@@ -75,6 +77,13 @@ for index in range(20):
 
     # Save the image data of the taken picture
     cameraClient.getImageData(index)
+
+    # uninitialize camera
+    cameraClient.uninitializeDevice()
+
+#above initializes camera in every loop, else we'd be running into errors. try the below as well
+
+# cameraClient.getAllImages()
 
 
 

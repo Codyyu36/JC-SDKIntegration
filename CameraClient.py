@@ -37,6 +37,10 @@ class CameraClient:
         nRet = JcSmartDevicePyd.SI_PyInit(self.devSN)
         print('init', nRet)
         self.waitForReply()
+    def uninitializeDevice(self):
+        nRet = JcSmartDevicePyd.SI_PyUninit(self.devSN)
+        print('uninit', nRet)
+        self.waitForReply()
 
     def getDeviceInfo(self):
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)
@@ -72,5 +76,18 @@ class CameraClient:
         dst = mat
         
         cv2.imwrite("{}.jpg".format(index), dst)
+
+    def getAllImages(self):
+        tParamMf1 = JcSmartDevicePyd.JcGetImg()
+        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_GET_IMAGE_DATA, tParamMf1)
+        print("get image", nRet)
+        tNoti = self.waitForReply()
+
+        tData = tNoti.m_pData
+        # 图像数据
+        matList = tData.m_tMatList
+        
+        for index, m in enumerate(matList):
+            cv2.imwrite("{}.jpg".format(index), m)
 
     # TODO: add swapping filter wheel after API is available
