@@ -75,21 +75,20 @@ class CameraClient:
         # 图像数据
         mat = tData.m_tImage.copy()
         dst = mat
-        
-        cv2.imwrite("{}.jpg".format(index), dst)
+        print("original max pixel: ", dst.max())
 
-    def getAllImages(self):
-        tParamMf1 = JcSmartDevicePyd.JcGetImg()
-        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_GET_IMAGE_DATA, tParamMf1)
-        print("get image", nRet)
-        tNoti = self.waitForReply()
+        # Normalize the pixel values between 0 and 1
+        normalized_image = dst / dst.max()
 
-        tData = tNoti.m_pData
-        # 图像数据
-        matList = tData.m_tMatList
+        # Scale up the values to the 8-bit range (0-255)
+        scaled_image = normalized_image * 255
+
+        # Round the values to integers
+        eight_bit_image = np.round(scaled_image).astype(np.uint8)
+
+        print("new max pixel: ", eight_bit_image.max())
         
-        for index, m in enumerate(matList):
-            cv2.imwrite("{}.jpg".format(index), m)
+        cv2.imwrite("{}.jpg".format(index), eight_bit_image)
 
     # TODO: add swapping filter wheel after API is available
 

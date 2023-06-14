@@ -40,13 +40,13 @@ cameraClient.getDeviceInfo()
 # Set the index value from the command-line argument
 index = args.index
 
-clear_exposure_values = [10000, 2650, 550, 110, 20]  # in milliseconds/10
-red_filter_exposure_values = [10500, 2700, 620, 125, 26]
+clear_exposure_values = [100000, 26500, 5500, 1100, 200]  # in milliseconds
+red_filter_exposure_values = [105000, 27000, 6200, 1250, 260]
 
 tNoti = None
 
 # Set camera exposure time, as this is constant
-cameraClient.setExposureTime(clear_exposure_values[index] * 10000)  # sdk takes in microseconds
+cameraClient.setExposureTime(red_filter_exposure_values[index] * 1000)  # sdk takes in microseconds
 
 # Send image swap request with index
 client.send_numbered_image_swap_request(index + 1)

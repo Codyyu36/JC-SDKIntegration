@@ -54,7 +54,7 @@ else:
 
     #set exposure time
     tParam = JcSmartDevicePyd.JcSetExpGainParam()
-    tParam.m_nExp = 250000
+    tParam.m_nExp = 3500000
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_EXPGAIN_VALUE,tParam)
     print("set Exposure Time", nRet)
     waitForReply()
@@ -91,6 +91,18 @@ else:
     print("mat dtype:{}".format(mat.dtype))
 
     dst = mat
+    print("original max pixel: ", dst.max())
+
+    # Normalize the pixel values between 0 and 1
+    normalized_image = dst / dst.max()
+
+    # Scale up the values to the 8-bit range (0-255)
+    scaled_image = normalized_image * 255
+
+    # Round the values to integers
+    eight_bit_image = np.round(scaled_image).astype(np.uint8)
+
+    print("new max pixel: ", eight_bit_image.max())
     #
     # jsVal = json.loads(tNoti.m_strJsonData)
     # nPixformat = JcSmartDevicePyd.Mono16
@@ -111,6 +123,6 @@ else:
     #     else:
     #         dst = mat.astype(np.uint16)
 
-    cv2.imwrite("1.jpg", dst)
+    cv2.imwrite("1.jpg", eight_bit_image)
 
 
