@@ -2,10 +2,13 @@ import subprocess
 import cv2
 
 # Define the file you want to run
-file_to_run = "SDKIntegrationScript.py"
+integration_script = "SDKIntegrationScript.py"
+color_filter_switch_script = "SwitchColorFilter.py"
 
-# Define the number of times to run the file
-num_times = 5
+# Define the number of images we have
+num_images = 5
 
-for index in range(num_times):
-    subprocess.call(["python", file_to_run, "--index", str(index)])
+subprocess.call(["python", color_filter_switch_script, "--filter", "CF3"])
+
+for index in range(num_images):
+    subprocess.call(["python", integration_script, "--index", str(index)])
