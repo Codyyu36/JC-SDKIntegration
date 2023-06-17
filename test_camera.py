@@ -3,8 +3,7 @@ import time
 import cv2
 import json
 import numpy as np
-
-exposure_values = [10000, 2650, 550, 110, 20]
+import subprocess
 
 def printRecvInfo(tNoti):
     strInfo = '[<--]CMD: %s, ret: %d, json: %s, error: %s.' % (
@@ -34,13 +33,15 @@ else:
             else:
                 time.sleep(0.001)
 
-    #check version
-    version_num = 'version: ' + JcSmartDevicePyd.SI_PyGetVersion()
-    print("version", version_num)
-    #
    #uninitialize
     # nRet = JcSmartDevicePyd.SI_PyUninit(sDevSN)
     # waitForReply()
+
+    # set ring filter to clear
+    color_filter_switch_script = "SwitchColorFilter.py"
+
+    # X is red, Y is green, Z is blue, CF3 is clear
+    subprocess.call(["python", color_filter_switch_script, "--filter", "X"])
 
     # initialize
     nRet = JcSmartDevicePyd.SI_PyInit(sDevSN)
@@ -52,21 +53,12 @@ else:
     print('get device info', nRet)
     waitForReply()
 
-    #set exposure time
+    # set exposure time
     tParam = JcSmartDevicePyd.JcSetExpGainParam()
     tParam.m_nExp = 3500000
-    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_EXPGAIN_VALUE,tParam)
+    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_EXPGAIN_VALUE, tParam)
     print("set Exposure Time", nRet)
     waitForReply()
-
-    # set ring filter to clear
-    # tParamFilters = JcSmartDevicePyd.JcSetFilterPos()
-    # nPos = JcSmartDevicePyd.eCF3
-    # tParamFilters.m_eWheelPosType = nPos
-    #
-    # nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
-    # waitForReply()
-    # print("change to clear color filter", nRet)
 
     #take picture
     tParamSNAP = JcSmartDevicePyd.JcSetExpGainParam()

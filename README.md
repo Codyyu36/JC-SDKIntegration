@@ -23,4 +23,4 @@ Follow these steps to integrate the SDK:
 
 1. Open the PG software and submit all images into the PG software.
 2. Open the Camera software. Click "Disconnect" and ensure that the camera has been successfully uninitialized.
-3. Run the `SDKIntegrationScript.py` script.
+3. Run `IntegrationRunner.py`.
