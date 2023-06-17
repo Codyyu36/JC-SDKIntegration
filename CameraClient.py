@@ -48,11 +48,19 @@ class CameraClient:
         self.waitForReply()
 
     def setExposureTime(self, exposure):
-        print("exposure time is {} ms")
+        print("exposure time is {}".format(exposure))
         tParam = JcSmartDevicePyd.JcSetExpGainParam()
         tParam.m_nExp = exposure
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_EXPGAIN_VALUE, tParam)
         print("set Exposure Time", nRet)
+        self.waitForReply()
+
+    def setDistance(self, distance):
+        print("distance is {}".format(distance))
+        tParamMain = JcSmartDevicePyd.JcMainFlowParam()
+        tParamMain.SetDistance(distance)
+        nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN,JcSmartDevicePyd.eREQ_SET_CONFIG_PARAM,tParamMain)
+        print("set distance", nRet)
         self.waitForReply()
 
     def takePicture(self):

@@ -48,6 +48,13 @@ else:
     print('init', nRet)
     waitForReply()
 
+    #set camera distance
+    tParamMain = JcSmartDevicePyd.JcMainFlowParam()
+    tParamMain.SetDistance(168)
+    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_CONFIG_PARAM,tParamMain)
+    print("set distance", nRet)
+    waitForReply()
+
     #get device info
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)
     print('get device info', nRet)

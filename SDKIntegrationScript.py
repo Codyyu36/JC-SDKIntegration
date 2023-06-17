@@ -32,6 +32,9 @@ cameraClient = CameraClient(sDevSN)
 # Initialize camera
 cameraClient.initializeDevice()
 
+# Set camera distance
+cameraClient.setDistance(168)
+
 # Get camera device info
 cameraClient.getDeviceInfo()
 
