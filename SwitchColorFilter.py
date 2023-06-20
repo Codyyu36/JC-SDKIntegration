@@ -25,7 +25,7 @@ elif filter_option == 'Y':
     cameraClient.useGreenColorFilter()
 elif filter_option == 'Z':
     cameraClient.useBlueColorFilter()
-elif filter_option == 'CF3':
+elif filter_option == 'clear':
     cameraClient.useClearColorFilter()
 else:
     print("Invalid filter option!")

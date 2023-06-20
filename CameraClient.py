@@ -73,7 +73,7 @@ class CameraClient:
         elapsed_time = end_time - start_time  # Calculate the elapsed time in seconds
         print("Elapsed time:", elapsed_time, "seconds")
 
-    def getImageData(self, index):
+    def getImageData(self, filename):
         tParamMf1 = JcSmartDevicePyd.JcGetImg()
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_GET_IMAGE_DATA, tParamMf1)
         print("get image", nRet)
@@ -96,7 +96,7 @@ class CameraClient:
 
         print("new max pixel: ", eight_bit_image.max())
         
-        cv2.imwrite("{}.jpg".format(index), eight_bit_image)
+        cv2.imwrite("{}.bmp".format(filename), eight_bit_image)
 
     # TODO: add swapping filter wheel after API is available
 

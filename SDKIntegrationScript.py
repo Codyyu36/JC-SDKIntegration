@@ -8,6 +8,7 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument('--index', type=int, help='Index value', required=True)
 parser.add_argument('--exposure', type=int, help='Exposure time', required=True)
+parser.add_argument('--filename', type=str, help='Image file name', required=True)
 args = parser.parse_args()
 
 # Read the CSV file into a pandas DataFrame
@@ -41,20 +42,17 @@ cameraClient.getDeviceInfo()
 
 ## Loop through all images
 
-# Set the index value from the command-line argument
-index = args.index
-
 tNoti = None
 
 # Set camera exposure time, as this is constant
 cameraClient.setExposureTime(args.exposure)  # sdk takes in microseconds
 
 # Send image swap request with index
-client.send_numbered_image_swap_request(index + 1)
+client.send_numbered_image_swap_request(args.index)
 time.sleep(1)
 
 # Get camera to take a picture
 cameraClient.takePicture()
 
 # Save the image data of the taken picture
-cameraClient.getImageData(index)
+cameraClient.getImageData(args.filename)
