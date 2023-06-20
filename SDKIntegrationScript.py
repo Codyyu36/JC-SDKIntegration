@@ -11,12 +11,6 @@ parser.add_argument('--exposure', type=int, help='Exposure time', required=True)
 parser.add_argument('--filename', type=str, help='Image file name', required=True)
 args = parser.parse_args()
 
-# Read the CSV file into a pandas DataFrame
-# df = pd.read_csv('SDKIntegrationConfig.csv')
-#
-# color_map = {"R":"Red", "G":"Green", "B":"Blue"}
-# image_paths = []
-
 # Create a PG client instance
 client = PGClient('127.0.0.1', 9999)
 
