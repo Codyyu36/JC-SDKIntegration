@@ -24,7 +24,6 @@ for index, row in df.iterrows():
     grey_level_B = row['grey_level_B']
     color_filter = row['color_filter']
     ET = row['ET']
-    index_value = row['index']
 
     directory_path = f"{color_we_focus}{greylevel_we_fixed_on}/"
     # Create the directory if it doesn't exist
@@ -32,11 +31,14 @@ for index, row in df.iterrows():
         os.makedirs(directory_path)
 
     # Create the filename
-    image_filename = f"{directory_path}/{grey_level_R}_{grey_level_G}_{grey_level_B}"
+    image_filename = f"{grey_level_R}_{grey_level_G}_{grey_level_B}"
+
+    # Create filename suffix
+    suffix = f"_{color_filter}_{ET}"
 
     # X is red, Y is green, Z is blue, CF3 is clear
     subprocess.call(["python", color_filter_switch_script, "--filter", color_filter])
 
     subprocess.call(["python", integration_script, "--index", str(index),
-                     "--exposure", str(ET*1000), "--filename", image_filename])
+                     "--exposure", str(ET*1000), "--filename", image_filename, "--filenameSuffix", suffix, "--saved_dir", directory_path])
 

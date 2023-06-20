@@ -9,16 +9,18 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--index', type=int, help='Index value', required=True)
 parser.add_argument('--exposure', type=int, help='Exposure time', required=True)
 parser.add_argument('--filename', type=str, help='Image file name', required=True)
+parser.add_argument('--saved_dir', type=str, help='Image saved directory', required=True)
+parser.add_argument('--filenameSuffix', type=str, help='Color filter and exposure time', required=True)
 args = parser.parse_args()
 
 # Create a PG client instance
-client = PGClient('127.0.0.1', 9999)
+pg_client = PGClient('127.0.0.1', 9999)
 
 # Connect to the PG
-client.connect()
+pg_client.connect()
 
 # Send the power switch request to PG
-client.send_power_on_request()
+pg_client.send_power_on_request()
 
 sDevSN = "FW151A001"  # Camera SN
 
@@ -42,11 +44,11 @@ tNoti = None
 cameraClient.setExposureTime(args.exposure)  # sdk takes in microseconds
 
 # Send image swap request with index
-client.send_numbered_image_swap_request(args.index)
+pg_client.send_image_swap_request(args.filename+".a1")
 time.sleep(1)
 
 # Get camera to take a picture
 cameraClient.takePicture()
 
 # Save the image data of the taken picture
-cameraClient.getImageData(args.filename)
+cameraClient.getImageData(args.saved_dir+args.filename+args.filenameSuffix)

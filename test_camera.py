@@ -67,61 +67,62 @@ else:
     print("set Exposure Time", nRet)
     waitForReply()
 
-    #take picture
-    tParamSNAP = JcSmartDevicePyd.JcSetExpGainParam()
-    start_time = time.time()
-    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_SNAP_OPERATE, tParamSNAP)
-    print("take picture", nRet)
-    waitForReply()
-    end_time = time.time()
-    elapsed_time = end_time - start_time  # Calculate the elapsed time in seconds
-    print("Elapsed time:", elapsed_time, "seconds")
+    for index in range(2):
+        #take picture
+        tParamSNAP = JcSmartDevicePyd.JcSetExpGainParam()
+        start_time = time.time()
+        nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_SNAP_OPERATE, tParamSNAP)
+        print("take picture", nRet)
+        waitForReply()
+        end_time = time.time()
+        elapsed_time = end_time - start_time  # Calculate the elapsed time in seconds
+        print("Elapsed time:", elapsed_time, "seconds")
 
-    #get image
-    tParamMf1 = JcSmartDevicePyd.JcGetImg()
-    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_IMAGE_DATA,tParamMf1)
-    print("get image", nRet)
-    tNoti = waitForReply()
+        #get image
+        tParamMf1 = JcSmartDevicePyd.JcGetImg()
+        nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_IMAGE_DATA,tParamMf1)
+        print("get image", nRet)
+        tNoti = waitForReply()
 
-    tData = tNoti.m_pData
+        tData = tNoti.m_pData
 
-    mat = tData.m_tImage.copy()
-    jsVal = json.loads(tNoti.m_strJsonData)
-    print("mat dtype:{}".format(mat.dtype))
+        mat = tData.m_tImage.copy()
+        jsVal = json.loads(tNoti.m_strJsonData)
+        print("mat dtype:{}".format(mat.dtype))
 
-    dst = mat
-    print("original max pixel: ", dst.max())
+        dst = mat
+        print("original max pixel: ", dst.max())
 
-    # Normalize the pixel values between 0 and 1
-    normalized_image = dst / dst.max()
+        # Normalize the pixel values between 0 and 1
+        normalized_image = dst / dst.max()
 
-    # Scale up the values to the 8-bit range (0-255)
-    scaled_image = normalized_image * 255
+        # Scale up the values to the 8-bit range (0-255)
+        scaled_image = normalized_image * 255
 
-    # Round the values to integers
-    eight_bit_image = np.round(scaled_image).astype(np.uint8)
+        # Round the values to integers
+        eight_bit_image = np.round(scaled_image).astype(np.uint8)
 
-    print("new max pixel: ", eight_bit_image.max())
-    #
-    # jsVal = json.loads(tNoti.m_strJsonData)
-    # nPixformat = JcSmartDevicePyd.Mono16
-    # if "PixFormat" in jsVal:
-    #     nPixformat = jsVal["PixFormat"]
-    #
-    # if mat.dtype == 'uint16':
-    #     if nPixformat == JcSmartDevicePyd.Mono12:
-    #         # dst = cv2.convertTo(mat, cv2.CV_16UC1, 16)
-    #         mat *= 16
-    #         dst = mat.astype(np.uint16)
-    #     elif nPixformat == JcSmartDevicePyd.BayerRG12:
-    #         # mat.convertTo(dst, cv2.CV_16UC1, 16)
-    #         mat *= 16
-    #         dst = mat.astype(np.uint16)
-    #         # cv2.cvtColor(dst, dst, cv2.COLOR_BayerRG2RGB)
-    #         dst = cv2.cvtColor(dst, cv2.COLOR_BayerRG2RGB)
-    #     else:
-    #         dst = mat.astype(np.uint16)
+        print("new max pixel: ", eight_bit_image.max())
+        #
+        # jsVal = json.loads(tNoti.m_strJsonData)
+        # nPixformat = JcSmartDevicePyd.Mono16
+        # if "PixFormat" in jsVal:
+        #     nPixformat = jsVal["PixFormat"]
+        #
+        # if mat.dtype == 'uint16':
+        #     if nPixformat == JcSmartDevicePyd.Mono12:
+        #         # dst = cv2.convertTo(mat, cv2.CV_16UC1, 16)
+        #         mat *= 16
+        #         dst = mat.astype(np.uint16)
+        #     elif nPixformat == JcSmartDevicePyd.BayerRG12:
+        #         # mat.convertTo(dst, cv2.CV_16UC1, 16)
+        #         mat *= 16
+        #         dst = mat.astype(np.uint16)
+        #         # cv2.cvtColor(dst, dst, cv2.COLOR_BayerRG2RGB)
+        #         dst = cv2.cvtColor(dst, cv2.COLOR_BayerRG2RGB)
+        #     else:
+        #         dst = mat.astype(np.uint16)
 
-    cv2.imwrite("1.jpg", eight_bit_image)
+        cv2.imwrite("{}.jpg".format(index), eight_bit_image)
 
 
