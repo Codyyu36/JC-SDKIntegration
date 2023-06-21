@@ -5,7 +5,6 @@ import os
 
 # Define the file you want to run
 integration_script = "SDKIntegrationScript.py"
-color_filter_switch_script = "SwitchColorFilter.py"
 csv_file = "test1.csv"
 color_map = {"R":"Red", "G":"Green", "B":"Blue"}
 
@@ -37,8 +36,6 @@ for index, row in df.iterrows():
     suffix = f"_{color_filter}_{ET}"
 
     # X is red, Y is green, Z is blue, CF3 is clear
-    subprocess.call(["python", color_filter_switch_script, "--filter", color_filter])
-
-    subprocess.call(["python", integration_script, "--index", str(index),
+    subprocess.call(["python", integration_script, "--index", str(index), "--filter", color_filter,
                      "--exposure", str(ET*1000), "--filename", image_filename, "--filenameSuffix", suffix, "--saved_dir", directory_path])
 

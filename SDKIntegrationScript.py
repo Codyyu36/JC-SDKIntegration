@@ -8,6 +8,7 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument('--index', type=int, help='Index value', required=True)
 parser.add_argument('--exposure', type=int, help='Exposure time', required=True)
+parser.add_argument('--filter', type=str, help='Index value', required=True)
 parser.add_argument('--filename', type=str, help='Image file name', required=True)
 parser.add_argument('--saved_dir', type=str, help='Image saved directory', required=True)
 parser.add_argument('--filenameSuffix', type=str, help='Color filter and exposure time', required=True)
@@ -30,8 +31,20 @@ cameraClient = CameraClient(sDevSN)
 # Initialize camera
 cameraClient.initializeDevice()
 
-# Set camera distance
-cameraClient.setDistance(104)
+# Get the filter option from command line argument
+filter_option = args.filter
+
+# Call the respective color filter based on the argument
+if filter_option == 'X':
+    cameraClient.useRedColorFilter()
+elif filter_option == 'Y':
+    cameraClient.useGreenColorFilter()
+elif filter_option == 'Z':
+    cameraClient.useBlueColorFilter()
+elif filter_option == 'clear':
+    cameraClient.useClearColorFilter()
+else:
+    print("Invalid filter option!")
 
 # Get camera device info
 cameraClient.getDeviceInfo()

@@ -38,22 +38,33 @@ else:
     # waitForReply()
 
     # set ring filter to clear
-    color_filter_switch_script = "SwitchColorFilter.py"
-
-    # X is red, Y is green, Z is blue, CF3 is clear
-    subprocess.call(["python", color_filter_switch_script, "--filter", "X"])
+    # color_filter_switch_script = "SwitchColorFilter.py"
+    #
+    # # X is red, Y is green, Z is blue, CF3 is clear
+    # subprocess.call(["python", color_filter_switch_script, "--filter", "X"])
 
     # initialize
     nRet = JcSmartDevicePyd.SI_PyInit(sDevSN)
     print('init', nRet)
     waitForReply()
 
-    #set camera distance
-    tParamMain = JcSmartDevicePyd.JcMainFlowParam()
-    tParamMain.SetDistance(168)
-    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_CONFIG_PARAM,tParamMain)
-    print("set distance", nRet)
+    # try changing color filter
+    tParamFilters = JcSmartDevicePyd.JcSetFilterPos()
+    nPos = JcSmartDevicePyd.eCF3
+    tParamFilters.m_eWheelPosType = nPos
+
+    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
     waitForReply()
+    print("change to blue color filter", nRet)
+    waitForReply()
+
+    #set camera distance
+    # tParamMain = JcSmartDevicePyd.JcMainFlowParam()
+    # tParamMain.SetDistance(104)
+    # tParamMain.HighPrecision(False)
+    # nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_SET_CONFIG_PARAM,tParamMain)
+    # print("set distance", nRet)
+    # waitForReply()
 
     #get device info
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)

@@ -98,8 +98,6 @@ class CameraClient:
         
         cv2.imwrite("{}.bmp".format(filename), eight_bit_image)
 
-    # TODO: add swapping filter wheel after API is available
-
     def useRedColorFilter(self):
 
         tParamFilters = JcSmartDevicePyd.JcSetFilterPos()
@@ -109,6 +107,7 @@ class CameraClient:
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
         self.waitForReply()
         print("change to red color filter", nRet)
+        self.waitForReply()
 
     def useGreenColorFilter(self):
 
@@ -119,6 +118,7 @@ class CameraClient:
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
         self.waitForReply()
         print("change to green color filter", nRet)
+        self.waitForReply()
 
     def useBlueColorFilter(self):
 
@@ -129,6 +129,7 @@ class CameraClient:
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
         self.waitForReply()
         print("change to blue color filter", nRet)
+        self.waitForReply()
 
     def useClearColorFilter(self):
 
@@ -139,3 +140,4 @@ class CameraClient:
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
         self.waitForReply()
         print("change to clear color filter", nRet)
+        self.waitForReply()
