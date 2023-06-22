@@ -30,6 +30,24 @@ class CameraClient:
             else:
                 time.sleep(0.001)
 
+    def waitForReply2(self, type):
+        """
+        监听消息
+        """
+        while True:
+            # 返回类型 int
+            tNoti = JcSmartDevicePyd.JcNotify()
+
+            ret = JcSmartDevicePyd.SI_PyGetNotify(self.devSN,tNoti)
+            if ret == 0:
+                # 接收回包
+                reply = tNoti.m_eReplyType
+                if reply==type:
+                    self.printRecvInfo(tNoti)
+                    return tNoti
+            else:
+                time.sleep(0.01)
+
     def initializeDevice(self):
         version_num = 'version: ' + JcSmartDevicePyd.SI_PyGetVersion()
         print("version", version_num)
@@ -37,6 +55,7 @@ class CameraClient:
         nRet = JcSmartDevicePyd.SI_PyInit(self.devSN)
         print('init', nRet)
         self.waitForReply()
+
     def uninitializeDevice(self):
         nRet = JcSmartDevicePyd.SI_PyUninit(self.devSN)
         print('uninit', nRet)
@@ -68,7 +87,7 @@ class CameraClient:
         start_time = time.time()
         nRet = JcSmartDevicePyd.SI_PyOperations(self.devSN, JcSmartDevicePyd.eREQ_SET_SNAP_OPERATE, tParamSNAP)
         print("take picture", nRet)
-        self.waitForReply()
+        self.waitForReply2(JcSmartDevicePyd.eREP_GET_EXPDONE_STATE)
         end_time = time.time()
         elapsed_time = end_time - start_time  # Calculate the elapsed time in seconds
         print("Elapsed time:", elapsed_time, "seconds")

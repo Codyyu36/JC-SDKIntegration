@@ -17,7 +17,7 @@ if nDevCnt < 1:
     print('No device find.')
 else:
     sDevSN = "FW151A001" # 设备 SN
-    def waitForReply():
+    def waitForReply(type):
         """
         监听消息
         """
@@ -28,10 +28,29 @@ else:
             ret = JcSmartDevicePyd.SI_PyGetNotify(sDevSN,tNoti)
             if ret == 0:
                 # 接收回包
+                reply = tNoti.m_eReplyType
+                if reply==type:
+                    printRecvInfo(tNoti)
+                    return tNoti
+            else:
+                time.sleep(0.01)
+
+
+    def waitForReply2():
+        """
+        监听消息
+        """
+        while True:
+            # 返回类型 int
+            tNoti = JcSmartDevicePyd.JcNotify()
+
+            ret = JcSmartDevicePyd.SI_PyGetNotify(sDevSN, tNoti)
+            if ret == 0:
+                # 接收回包
                 printRecvInfo(tNoti)
                 return tNoti
             else:
-                time.sleep(0.001)
+                time.sleep(0.01)
 
    #uninitialize
     # nRet = JcSmartDevicePyd.SI_PyUninit(sDevSN)
@@ -46,7 +65,7 @@ else:
     # initialize
     nRet = JcSmartDevicePyd.SI_PyInit(sDevSN)
     print('init', nRet)
-    waitForReply()
+    waitForReply(JcSmartDevicePyd.eREP_INIT_DEVICE_OPERATE)
 
     # try changing color filter
     tParamFilters = JcSmartDevicePyd.JcSetFilterPos()
@@ -54,9 +73,9 @@ else:
     tParamFilters.m_eWheelPosType = nPos
 
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_FILTER_VALUE, tParamFilters)
-    waitForReply()
+    waitForReply2()
     print("change to blue color filter", nRet)
-    waitForReply()
+    waitForReply2()
 
     #set camera distance
     # tParamMain = JcSmartDevicePyd.JcMainFlowParam()
@@ -69,22 +88,24 @@ else:
     #get device info
     nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_DEVICE_INFO)
     print('get device info', nRet)
-    waitForReply()
-
-    # set exposure time
-    tParam = JcSmartDevicePyd.JcSetExpGainParam()
-    tParam.m_nExp = 3500000
-    nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_EXPGAIN_VALUE, tParam)
-    print("set Exposure Time", nRet)
-    waitForReply()
+    waitForReply2()
 
     for index in range(2):
+        # set exposure time
+        tParam = JcSmartDevicePyd.JcSetExpGainParam()
+        tParam.m_nExp = 4000000
+        nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_EXPGAIN_VALUE, tParam)
+        print("set Exposure Time", nRet)
+        waitForReply2()
+
         #take picture
         tParamSNAP = JcSmartDevicePyd.JcSetExpGainParam()
         start_time = time.time()
         nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN, JcSmartDevicePyd.eREQ_SET_SNAP_OPERATE, tParamSNAP)
         print("take picture", nRet)
-        waitForReply()
+
+        tNoti = waitForReply(JcSmartDevicePyd.eREP_GET_EXPDONE_STATE)
+
         end_time = time.time()
         elapsed_time = end_time - start_time  # Calculate the elapsed time in seconds
         print("Elapsed time:", elapsed_time, "seconds")
@@ -93,8 +114,7 @@ else:
         tParamMf1 = JcSmartDevicePyd.JcGetImg()
         nRet = JcSmartDevicePyd.SI_PyOperations(sDevSN,JcSmartDevicePyd.eREQ_GET_IMAGE_DATA,tParamMf1)
         print("get image", nRet)
-        tNoti = waitForReply()
-
+        tNoti = waitForReply(JcSmartDevicePyd.eREP_GET_IMAGE_VALUE)
         tData = tNoti.m_pData
 
         mat = tData.m_tImage.copy()
