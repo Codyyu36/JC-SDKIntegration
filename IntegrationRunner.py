@@ -76,7 +76,7 @@ for index, row in df.iterrows():
     cameraClient.setExposureTime(ET)  # sdk takes in microseconds
 
     # Send image swap request with index
-    pg_client.send_image_swap_request(image_filename)
+    pg_client.send_image_swap_request(image_filename+".a1")
 
     # Get camera to take a picture
     cameraClient.takePicture()
