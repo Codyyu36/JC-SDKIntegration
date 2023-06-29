@@ -19,3 +19,8 @@ RGB_Grayscale_Images
 Red32/
 ThresholdExperiment
 images/
+data/
+*.bmp
+*.jpg
+*.zip
+0629Plots/
