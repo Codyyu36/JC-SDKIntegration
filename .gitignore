@@ -4,7 +4,6 @@ SDK&Demo_V2.5.1.230517/
 CameraCodeFW151/.vs/
 CameraCodeFW151/x64/
 patterns/
-*.csv
 *.xlsx
 *.dll
 *.pyd
