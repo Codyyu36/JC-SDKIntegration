@@ -3,6 +3,8 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
+import skimage.measure
+
 
 def extract_middle_roi(image, target_width, offset_X, offset_Y):
     """
@@ -86,7 +88,7 @@ def preprocess_image(image_path, threshold_val=0):
     return threshold_val, new_path
 
 
-def RGB_mask(image_path, output_path, threshold_val, offsetX, offsetY):
+def RGB_mask(image_path, output_path, threshold_val, offsetX, offsetY, threshold_area=100):
     """
     Preprocess an image by cropping and thresholding.
 
@@ -147,7 +149,7 @@ def RGB_mask(image_path, output_path, threshold_val, offsetX, offsetY):
     image_with_rectangles = np.copy(image_filtered)
 
     
-    threshold_area = 100
+    
 
     id = 0
     for i in range(0, len(contours)):
@@ -207,7 +209,93 @@ def apply_mask(original_image, contours, output_image, offset_X, offset_Y):
         cv2.drawContours(mask_image, contours, i, color=1, thickness=-1)
         cv2.imwrite(output_image, clear_image * mask_image)
  
+def RGB_mask_no_roi(image_path, output_path, threshold_val):
+    """
+    Preprocess an image by cropping and thresholding.
 
+    Args:
+        image_path (str): Path to the input grayscale image.
+        threshold_val (int, optional): Threshold value for image thresholding.
+
+    Returns:
+        tuple: Tuple containing threshold value and path to the preprocessed image.
+    """
+
+    df = pd.DataFrame(columns=['id', 'x', 'y', 'area', 'perimeter', 'total_signal'])
+
+    # Load the grayscale image
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+ 
+    # Filter out pixels with intensities below the threshold_val
+    _, image_filtered = cv2.threshold(image, threshold_val, 255, cv2.THRESH_TOZERO)
+
+
+    binary_image = np.where(image_filtered > 0,255,0)
+    cv2.imwrite("binary.jpg", binary_image)
+
+
+    print("Threshold value:", threshold_val)
+
+    # Save and download to local disk
+    # Extract the filename from the original image path
+    filename = image_path.split("/")[-1]
+
+    # Create the new path by concatenating the desired directory and the filename
+    new_path = os.path.dirname(image_path) + "/thresholded/"
+
+    # Create the folder if it doesn't exist
+    if not os.path.exists(new_path):
+        os.makedirs(new_path)
+
+    contours, _ = cv2.findContours(image_filtered, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+   # cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    filtered_contours = []
+    # Create a copy of the original image
+    image_with_rectangles = np.copy(image_filtered)
+
+    
+    threshold_area = 100
+
+    id = 0
+    for i in range(0, len(contours)):
+        contour = contours[i]
+    #for contour in contours:
+        area = cv2.contourArea(contour)    
+             
+        if area > threshold_area:  
+            filtered_contours.append(contour)
+            x, y, w, h = cv2.boundingRect(contour)
+            #cv2.rectangle(image_with_rectangles, (x, y), (x + w, y + h), (155), 1)  # Adjust color and thickness as needed
+            cv2.drawContours(image_with_rectangles, [contour], -1, 100, 1)
+
+            M = cv2.moments(contour)
+            area = M["m00"]
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+            # Perimeter
+            perimeter = cv2.arcLength(contour, True)
+            centroid = [cX, cY]
+            cv2.circle(image_with_rectangles, (cX, cY), 0, (0), -1)
+            cv2.putText(image_with_rectangles, str(id), (cX - 2, cY - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255, 1)
+            
+
+            signal = sum_contour(contour, image)
+            df.loc[len(df.index)] = [id, cX, cY, area, perimeter, signal]
+            print("ID :", id)
+            id = id + 1
+                
+    #Check the images with bounding rectangles
+    cv2.imwrite(output_path, image_with_rectangles)
+    
+    new_path += filename
+
+    cv2.imwrite(new_path, image_filtered)
+
+    print("Saved thresholded image to: {}".format(new_path))
+
+    return threshold_val, new_path, filtered_contours, df, binary_image
 
 def read_and_filter_image(image_path, output_path, threshold=8):
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
@@ -244,6 +332,27 @@ def get_signal_mapping(image, mapping):
         new_map[key] = signal_sum(image, mapping[key])
     return new_map
 
+def signal_sum_overlap(image, array, overlap_map):
+    sum = 0
+    for point in array:
+        if overlap_map[point[0]][point[1]] > 0:
+            sum = sum + int (image[point[0]][point[1]] * overlap_map[point[0]][point[1]] / 100)
+        else:
+            sum = sum + image[point[0]][point[1]]
+    return sum
+
+def get_signal_mapping(image, mapping):
+    new_map = {}
+    for key in mapping:
+        new_map[key] = signal_sum(image, mapping[key])
+    return new_map
+
+def get_signal_mapping_overlap(image, mapping, overlap_map):
+    new_map = {}
+    for key in mapping:
+        new_map[key] = signal_sum_overlap(image, mapping[key], overlap_map)
+    return new_map
+
 def read_and_extract_roi(path, offset_X, offset_Y):
     image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     # Crop image
@@ -262,3 +371,85 @@ def generate_mapping(contours, image):
             #image[dot[0][1], dot[0][0]] = 255
     return covered_pixels_mapping
     
+def reconstruct_mask(image, mapping):
+    output_image = np.zeros(image.shape)
+    for i in range(0, len(mapping)): 
+        for dot in mapping[i]:
+            output_image[dot[0], dot[1]] = image[dot[0], dot[1]]
+    return output_image
+   
+
+
+def check(i, j, n, m):
+    return i >= 0 and j >= 0 and i < n and j < m
+ 
+def mark_component(v, vis, i, j, n, m, l):
+    if not check(i, j, n, m):
+        return
+    
+    vis[i][j] = True
+    if v[i][j] == 255:
+        v[i][j] = 0
+        #add point to list
+        l.append([i, j])
+
+        mark_component(v, vis, i + 1, j, n, m, l)
+        mark_component(v, vis, i - 1, j, n, m, l)
+        mark_component(v, vis, i, j + 1, n, m, l)
+        mark_component(v, vis, i, j - 1, n, m, l)
+
+def run_dfs(binary, area_threshold):
+    print('copying array')
+    v = binary.copy()
+    n = len(v)
+    m = len(v[0])
+    cnt = 0
+    print('creating boolean table')
+    vis = [[False for j in range(m)] for i in range(n)]
+    mapping = {}
+    idx = 0
+    print('running')
+    for i in range(n):
+        for j in range(m):
+            if not vis[i][j] and v[i][j] == 255:
+                cnt += 1
+                lst = []
+                mark_component(v, vis, i, j, n, m, lst)
+                if len(lst) > area_threshold:
+                    mapping[idx] = lst
+                    idx = idx + 1
+                    print(idx)
+    print("The number of islands in the matrix are:")
+    print(len(mapping))
+    return mapping
+
+#green_offset = 14
+def run_dfs_green(binary, area_threshold, green_offset):
+    print('copying array')
+    v = binary.copy()
+    n = len(v)
+    m = len(v[0])
+    cnt = 0
+    print('creating boolean table')
+    vis = [[False for j in range(m)] for i in range(n)]
+    mapping = {}
+    idx = 0
+    print('running....')
+    for i in range(n):
+        for j in range(m):
+            if not vis[i][j] and v[i][j] == 255:
+                cnt += 1
+                lst = []
+                mark_component(v, vis, i, j, n, m, lst)
+                if j + green_offset < m - 1 and i - 2 < n - 1:
+                    mark_component(v, vis, i - 2, j + green_offset, n, m, lst)
+                if len(lst) > area_threshold:
+                    mapping[idx] = lst
+                    idx = idx + 1
+                    print(idx)
+    print("The number of islands in the matrix are:")
+    print(len(mapping))
+    return mapping
+
+def mean_pooling(image, kernal_size):
+    return skimage.measure.block_reduce(image, (kernal_size,kernal_size), np.mean)
